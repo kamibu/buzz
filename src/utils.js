@@ -32,3 +32,5 @@ var utils = {
         return  Math.round( ( ( total / 100 ) * percent ) * r ) / r;
     }
 };
+
+buzz.utils = utils;

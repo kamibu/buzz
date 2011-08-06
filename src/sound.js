@@ -1,4 +1,4 @@
-function Sound( src, options ) {
+function sound( src, options ) {
     var pid = 0,
         events = [],
         eventsOnce = {},
@@ -48,24 +48,24 @@ function Sound( src, options ) {
     }
     else {
         for ( i in this ) {
-            if ( this.hasOwnProperty( i ) && typeof this[ i ] == "function" && i != "unsupported" ) {
+            if ( i in sound.prototype && typeof this[ i ] == "function" && i != "unsupported" ) {
                 this[ i ] = this.unsupported;
             }
         }
     }
 }
 
-Sound.prototype.load = function() {
+sound.prototype.load = function() {
     this.sound.load();
     return this;
 };
 
-Sound.prototype.play = function() {
+sound.prototype.play = function() {
     this.sound.play();
     return this;
 };
 
-Sound.prototype.togglePlay = function() {
+sound.prototype.togglePlay = function() {
     if ( this.sound.paused ) {
         this.sound.play();
     } else {
@@ -74,26 +74,26 @@ Sound.prototype.togglePlay = function() {
     return this;
 };
 
-Sound.prototype.pause = function() {
+sound.prototype.pause = function() {
     this.sound.pause();
     return this;
 };
 
-Sound.prototype.isPaused = function() {
+sound.prototype.isPaused = function() {
     return this.sound.paused;
 };
 
-Sound.prototype.stop = function() {
+sound.prototype.stop = function() {
     this.setTime( this.getDuration() );
     this.sound.pause();
     return this;
 };
 
-Sound.prototype.isEnded = function() {
+sound.prototype.isEnded = function() {
     return this.sound.ended;
 };
 
-Sound.prototype.loop = function() {
+sound.prototype.loop = function() {
     this.sound.loop = 'loop';
     this.bind( 'ended.buzzloop', function() {
         this.currentTime = 0;
@@ -102,32 +102,32 @@ Sound.prototype.loop = function() {
     return this;
 };
 
-Sound.prototype.unloop = function() {
+sound.prototype.unloop = function() {
     this.sound.removeAttribute( 'loop' );
     this.unbind( 'ended.buzzloop' );
     return this;
 };
 
-Sound.prototype.mute = function() {
+sound.prototype.mute = function() {
     this.sound.muted = true;
     return this;
 };
 
-Sound.prototype.unmute = function() {
+sound.prototype.unmute = function() {
     this.sound.muted = false;
     return this;
 };
 
-Sound.prototype.toggleMute = function() {
+sound.prototype.toggleMute = function() {
     this.sound.muted = !this.sound.muted;
     return this;
 };
 
-Sound.prototype.isMuted = function() {
+sound.prototype.isMuted = function() {
     return this.sound.muted;
 };
 
-Sound.prototype.setVolume = function( volume ) {
+sound.prototype.setVolume = function( volume ) {
     if ( volume < 0 ) volume = 0;
     if ( volume > 100 ) volume = 100;
     this.volume = volume;
@@ -135,72 +135,72 @@ Sound.prototype.setVolume = function( volume ) {
     return this;
 };
 
-Sound.prototype.getVolume = function() {
+sound.prototype.getVolume = function() {
     return this.volume;
 };
 
-Sound.prototype.increaseVolume = function( value ) {
+sound.prototype.increaseVolume = function( value ) {
     return this.setVolume( this.volume + ( value || 1 ) );
 };
 
-Sound.prototype.decreaseVolume = function( value ) {
+sound.prototype.decreaseVolume = function( value ) {
     return this.setVolume( this.volume - ( value || 1 ) );
 };
 
-Sound.prototype.setTime = function( time ) {
+sound.prototype.setTime = function( time ) {
     this.whenReady( function() {
         this.sound.currentTime = time;
     });
     return this;
 };
 
-Sound.prototype.getTime = function() {
+sound.prototype.getTime = function() {
     var time = Math.round( this.sound.currentTime * 100 ) / 100;
     return isNaN( time ) ? buzz.defaults.placeholder : time;
 };
 
-Sound.prototype.setPercent = function( percent ) {
-    return this.setTime( utils.fromPercent( percent, this.sound.duration ) );
+sound.prototype.setPercent = function( percent ) {
+    return this.setTime( buzz.utils.fromPercent( percent, this.sound.duration ) );
 };
 
-Sound.prototype.getPercent = function() {
-    var percent = Math.round( utils.toPercent( this.sound.currentTime, this.sound.duration ) );
+sound.prototype.getPercent = function() {
+    var percent = Math.round( buzz.utils.toPercent( this.sound.currentTime, this.sound.duration ) );
     return isNaN( percent ) ? buzz.defaults.placeholder : percent;
 };
 
-Sound.prototype.setSpeed = function( duration ) {
+sound.prototype.setSpeed = function( duration ) {
     this.sound.playbackRate = duration;
 };
 
-Sound.prototype.getSpeed = function() {
+sound.prototype.getSpeed = function() {
     return this.sound.playbackRate;
 };
 
-Sound.prototype.getDuration = function() {
+sound.prototype.getDuration = function() {
     var duration = Math.round( this.sound.duration * 100 ) / 100;
     return isNaN( duration ) ? buzz.defaults.placeholder : duration;
 };
 
-Sound.prototype.getPlayed = function() {
+sound.prototype.getPlayed = function() {
     return timerangeToArray( this.sound.played );
 };
 
-Sound.prototype.getBuffered = function() {
+sound.prototype.getBuffered = function() {
     return timerangeToArray( this.sound.buffered );
 };
 
-Sound.prototype.getSeekable = function() {
+sound.prototype.getSeekable = function() {
     return timerangeToArray( this.sound.seekable );
 };
 
-Sound.prototype.getErrorCode = function() {
+sound.prototype.getErrorCode = function() {
     if ( this.sound.error ) {
         return this.sound.error.code;
     }
     return 0;
 };
 
-Sound.prototype.getErrorMessage = function() {
+sound.prototype.getErrorMessage = function() {
     switch( this.getErrorCode() ) {
         case 1:
             return 'MEDIA_ERR_ABORTED';
@@ -215,11 +215,11 @@ Sound.prototype.getErrorMessage = function() {
     }
 };
 
-Sound.prototype.getStateCode = function() {
+sound.prototype.getStateCode = function() {
     return this.sound.readyState;
 };
 
-Sound.prototype.getStateMessage = function() {
+sound.prototype.getStateMessage = function() {
     switch( this.getStateCode() ) {
         case 0:
             return 'HAVE_NOTHING';
@@ -236,11 +236,11 @@ Sound.prototype.getStateMessage = function() {
     }
 };
 
-Sound.prototype.getNetworkStateCode = function() {
+sound.prototype.getNetworkStateCode = function() {
     return this.sound.networkState;
 };
 
-Sound.prototype.getNetworkStateMessage = function() {
+sound.prototype.getNetworkStateMessage = function() {
     switch( this.getNetworkStateCode() ) {
         case 0:
             return 'NETWORK_EMPTY';
@@ -255,16 +255,16 @@ Sound.prototype.getNetworkStateMessage = function() {
     }
 };
 
-Sound.prototype.set = function( key, value ) {
+sound.prototype.set = function( key, value ) {
     this.sound[ key ] = value;
     return this;
 };
 
-Sound.prototype.get = function( key ) {
+sound.prototype.get = function( key ) {
     return key ? this.sound[ key ] : this.sound;
 };
 
-Sound.prototype.bind = function( types, func ) {
+sound.prototype.bind = function( types, func ) {
     var that = this,
         efunc = function( e ) { func.call( that, e ); };
 
@@ -281,7 +281,7 @@ Sound.prototype.bind = function( types, func ) {
     return this;
 };
 
-Sound.prototype.unbind = function( types ) {
+sound.prototype.unbind = function( types ) {
     types = types.split( ' ' );
 
     for( var t = 0; t < types.length; t++ ) {
@@ -299,7 +299,7 @@ Sound.prototype.unbind = function( types ) {
     return this;
 };
 
-Sound.prototype.bindOnce = function( type, func ) {
+sound.prototype.bindOnce = function( type, func ) {
     var that = this;
 
     eventsOnce[ pid++ ] = false;
@@ -312,7 +312,7 @@ Sound.prototype.bindOnce = function( type, func ) {
     });
 };
 
-Sound.prototype.trigger = function( types ) {
+sound.prototype.trigger = function( types ) {
     types = types.split( ' ' );
 
     for( var t = 0; t < types.length; t++ ) {
@@ -330,7 +330,7 @@ Sound.prototype.trigger = function( types ) {
     return this;
 };
 
-Sound.prototype.fadeTo = function( to, duration, callback ) {
+sound.prototype.fadeTo = function( to, duration, callback ) {
     if ( duration instanceof Function ) {
         callback = duration;
         duration = buzz.defaults.duration;
@@ -363,15 +363,15 @@ Sound.prototype.fadeTo = function( to, duration, callback ) {
     return this;
 };
 
-Sound.prototype.fadeIn = function( duration, callback ) {
+sound.prototype.fadeIn = function( duration, callback ) {
     return this.setVolume(0).fadeTo( 100, duration, callback );
 };
 
-Sound.prototype.fadeOut = function( duration, callback ) {
+sound.prototype.fadeOut = function( duration, callback ) {
     return this.fadeTo( 0, duration, callback );
 };
 
-Sound.prototype.fadeWith = function( sound, duration ) {
+sound.prototype.fadeWith = function( sound, duration ) {
     this.fadeOut( duration, function() {
         this.stop();
     });
@@ -381,7 +381,7 @@ Sound.prototype.fadeWith = function( sound, duration ) {
     return this;
 };
 
-Sound.prototype.whenReady = function( func ) {
+sound.prototype.whenReady = function( func ) {
     var that = this;
     if ( this.sound.readyState === 0 ) {
         this.bind( 'canplay.buzzwhenready', function() {
@@ -392,7 +392,7 @@ Sound.prototype.whenReady = function( func ) {
     }
 };
 
-Sound.prototype.unsupported = function() {
+sound.prototype.unsupported = function() {
     return this;
 };
 
@@ -422,3 +422,5 @@ function addSource( sound, src ) {
     }
     sound.appendChild( source );
 }
+
+buzz.sound = sound;

@@ -22,7 +22,7 @@ var buzz = {
     el: document.createElement( 'audio' ),
 
     all: function() {
-        return new buzz.group( buzz.sounds );
+        return new buzz.group( this.sounds );
     },
 
     isSupported: function() {
