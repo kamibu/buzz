@@ -1,25 +1,25 @@
 function group( sounds ) {
-    sounds = argsToArray( sounds, arguments );
+    this.sounds = argsToArray( sounds, arguments );
 }
 
 // publics
 group.prototype.getSounds = function() {
-    return sounds;
+    return this.sounds;
 };
 
 group.prototype.add = function( soundArray ) {
     soundArray = argsToArray( soundArray, arguments );
     for( var a = 0; a < soundArray.length; a++ ) {
-        sounds.push( soundArray[ a ] );
+        this.sounds.push( soundArray[ a ] );
     }
 };
 
 group.prototype.remove = function( soundArray ) {
     soundArray = argsToArray( soundArray, arguments );
     for( var a = 0; a < soundArray.length; a++ ) {
-        for( var i = 0; i < sounds.length; i++ ) {
-            if ( sounds[ i ] == soundArray[ a ] ) {
-                delete sounds[ i ];
+        for( var i = 0; i < this.sounds.length; i++ ) {
+            if ( this.sounds[ i ] == soundArray[ a ] ) {
+                delete this.sounds[ i ];
                 break;
             }
         }
@@ -27,130 +27,109 @@ group.prototype.remove = function( soundArray ) {
 };
 
 group.prototype.load = function() {
-    fn( 'load' );
-    return this;
+    return this.fn( 'load' );
 };
 
 group.prototype.play = function() {
-    fn( 'play' );
-    return this;
+    return this.fn( 'play' );
 };
 
 group.prototype.togglePlay = function( ) {
-    fn( 'togglePlay' );
-    return this;
+    return this.fn( 'togglePlay' );
 };
 
 group.prototype.pause = function( time ) {
-    fn( 'pause', time );
-    return this;
+    return this.fn( 'pause', time );
 };
 
 group.prototype.stop = function() {
-    fn( 'stop' );
-    return this;
+    return this.fn( 'stop' );
 };
 
 group.prototype.mute = function() {
-    fn( 'mute' );
-    return this;
+    return this.fn( 'mute' );
 };
 
 group.prototype.unmute = function() {
-    fn( 'unmute' );
-    return this;
+    return this.fn( 'unmute' );
 };
 
 group.prototype.toggleMute = function() {
-    fn( 'toggleMute' );
-    return this;
+    return this.fn( 'toggleMute' );
 };
 
 group.prototype.setVolume = function( volume ) {
-    fn( 'setVolume', volume );
-    return this;
+    return this.fn( 'setVolume', volume );
 };
 
 group.prototype.increaseVolume = function( value ) {
-    fn( 'increaseVolume', value );
-    return this;
+    return this.fn( 'increaseVolume', value );
 };
 
 group.prototype.decreaseVolume = function( value ) {
-    fn( 'decreaseVolume', value );
-    return this;
+    return this.fn( 'decreaseVolume', value );
 };
 
 group.prototype.loop = function() {
-    fn( 'loop' );
-    return this;
+    return this.fn( 'loop' );
 };
 
 group.prototype.unloop = function() {
-    fn( 'unloop' );
-    return this;
+    return this.fn( 'unloop' );
 };
 
 group.prototype.setTime = function( time ) {
-    fn( 'setTime', time );
-    return this;
+    return this.fn( 'setTime', time );
 };
 
 group.prototype.setduration = function( duration ) {
-    fn( 'setduration', duration );
-    return this;
+    return this.fn( 'setduration', duration );
 };
 
 group.prototype.set = function( key, value ) {
-    fn( 'set', key, value );
-    return this;
+    return this.fn( 'set', key, value );
 };
 
 group.prototype.bind = function( type, func ) {
-    fn( 'bind', type, func );
-    return this;
+    return this.fn( 'bind', type, func );
 };
 
 group.prototype.unbind = function( type ) {
-    fn( 'unbind', type );
-    return this;
+    return this.fn( 'unbind', type );
 };
 
 group.prototype.bindOnce = function( type, func ) {
-    fn( 'bindOnce', type, func );
-    return this;
+    return this.fn( 'bindOnce', type, func );
 };
 
 group.prototype.trigger = function( type ) {
-    fn( 'trigger', type );
-    return this;
+    return this.fn( 'trigger', type );
 };
 
 group.prototype.fade = function( from, to, duration, callback ) {
-    fn( 'fade', from, to, duration, callback );
-    return this;
+    return this.fn( 'fade', from, to, duration, callback );
 };
 
 group.prototype.fadeIn = function( duration, callback ) {
-    fn( 'fadeIn', duration, callback );
-    return this;
+    return this.fn( 'fadeIn', duration, callback );
 };
 
 group.prototype.fadeOut = function( duration, callback ) {
-    fn( 'fadeOut', duration, callback );
+    return this.fn( 'fadeOut', duration, callback );
+};
+
+group.prototype.fn = function() {
+    var args = argsToArray( null, arguments ),
+        func = args.shift();
+
+    for( var i = 0; i < this.sounds.length; i++ ) {
+        this.sounds[ i ][ func ].apply( this.sounds[ i ], args );
+    }
+
     return this;
 };
 
 // privates
-function fn() {
-    var args = argsToArray( null, arguments ),
-        func = args.shift();
-
-    for( var i = 0; i < sounds.length; i++ ) {
-        sounds[ i ][ func ].apply( sounds[ i ], args );
-    }
-}
-
 function argsToArray( array, args ) {
     return ( array instanceof Array ) ? array : Array.prototype.slice.call( args );
 }

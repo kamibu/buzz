@@ -1,9 +1,9 @@
 function sound( src, options ) {
-    var pid = 0,
-        events = [],
-        eventsOnce = {},
-        supported = buzz.isSupported(),
-        i;
+    var supported = buzz.isSupported(), i;
+
+    this.pid = 0;
+    this.events = [];
+    this.eventsOnce = {};
 
     options = options || {};
 
@@ -275,7 +275,7 @@ sound.prototype.bind = function( types, func ) {
             idx = type;
             type = idx.split( '.' )[ 0 ];
 
-            events.push( { idx: idx, func: efunc } );
+            this.events.push( { idx: idx, func: efunc } );
             this.sound.addEventListener( type, efunc, true );
     }
     return this;
@@ -288,11 +288,11 @@ sound.prototype.unbind = function( types ) {
         var idx = types[ t ];
             type = idx.split( '.' )[ 0 ];
 
-        for( var i = 0; i < events.length; i++ ) {
-            var namespace = events[ i ].idx.split( '.' );
-            if ( events[ i ].idx == idx || ( namespace[ 1 ] && namespace[ 1 ] == idx.replace( '.', '' ) ) ) {
-                this.sound.removeEventListener( type, events[ i ].func, true );
-                delete events[ i ];
+        for( var i = 0; i < this.events.length; i++ ) {
+            var namespace = this.events[ i ].idx.split( '.' );
+            if ( this.events[ i ].idx == idx || ( namespace[ 1 ] && namespace[ 1 ] == idx.replace( '.', '' ) ) ) {
+                this.sound.removeEventListener( type, this.events[ i ].func, true );
+                delete this.events[ i ];
             }
         }
     }
@@ -302,13 +302,13 @@ sound.prototype.unbind = function( types ) {
 sound.prototype.bindOnce = function( type, func ) {
     var that = this;
 
-    eventsOnce[ pid++ ] = false;
-    this.bind( pid + type, function() {
-       if ( !eventsOnce[ pid ] ) {
-           eventsOnce[ pid ] = true;
+    this.eventsOnce[ this.pid++ ] = false;
+    this.bind( this.pid + type, function() {
+       if ( !this.eventsOnce[ this.pid ] ) {
+           this.eventsOnce[ this.pid ] = true;
            func.call( that );
        }
-       that.unbind( pid + type );
+       that.unbind( this.pid + type );
     });
 };
 
@@ -318,9 +318,9 @@ sound.prototype.trigger = function( types ) {
     for( var t = 0; t < types.length; t++ ) {
         var idx = types[ t ];
 
-        for( var i = 0; i < events.length; i++ ) {
-            var eventType = events[ i ].idx.split( '.' );
-            if ( events[ i ].idx == idx || ( eventType[ 0 ] && eventType[ 0 ] == idx.replace( '.', '' ) ) ) {
+        for( var i = 0; i < this.events.length; i++ ) {
+            var eventType = this.events[ i ].idx.split( '.' );
+            if ( this.events[ i ].idx == idx || ( eventType[ 0 ] && eventType[ 0 ] == idx.replace( '.', '' ) ) ) {
                 var evt = document.createEvent('HTMLEvents');
                 evt.initEvent( eventType[ 0 ], false, true );
                 this.sound.dispatchEvent( evt );
